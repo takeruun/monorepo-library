@@ -1,0 +1,8 @@
+{
+  "name":"my-names",
+  "private": true,
+  "scripts": {
+    "build": "tsc",
+    "clean": "tsc --build --clean"
+  }
+}
