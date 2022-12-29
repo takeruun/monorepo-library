@@ -6,8 +6,7 @@
       "outputs": ["dist/**"]
     },
     "clean": {
-      "dependsOn": [],
-      "outputs": []
+      "cache": false
     }
   },
   "globalDependencies": [

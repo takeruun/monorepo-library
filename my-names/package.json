@@ -3,7 +3,8 @@
   "private": true,
   "version": "1.0.0",
   "scripts": {
-    "build": "tsc",
-    "clean": "tsc --build --clean"
+    "build": "vite build",
+    "dev": "vite dev",
+    "clean": "rm -r ./dist"
   }
 }
