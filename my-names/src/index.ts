@@ -1,1 +1,1 @@
-export * from './MyNames'
+export * from './MyNames';

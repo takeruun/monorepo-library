@@ -1,0 +1,32 @@
+{
+  "ignorePatterns": ["node_modules", ".next", "dist"],
+  "extends": [
+    "eslint:recommended",
+    "plugin:react/recommended",
+    "plugin:@typescript-eslint/recommended",
+    "next/core-web-vitals",
+    "next",
+    "prettier"
+  ],
+  "plugins": ["unused-imports", "@typescript-eslint", "import"],
+  "parser": "@typescript-eslint/parser",
+  "rules": {
+    "import/order": [
+      "error",
+      {
+        // グループごとの並び順
+        "groups": [
+          "builtin", // 組み込みモジュール
+          "external", // npmでインストールした外部ライブラリ
+          "internal", // パス設定した自作モジュール
+          ["parent", "sibling"], // 親階層と小階層のファイル
+          "object", // object imports
+          "index", // 同階層のファイル
+          "type" // 型だけをインポートする type imports
+        ],
+        "alphabetize": { "order": "asc" },
+        "pathGroupsExcludedImportTypes": ["builtin"]
+      }
+    ]
+  }
+}
