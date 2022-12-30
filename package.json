@@ -29,9 +29,11 @@
   },
   "scripts": {
     "build": "turbo run build",
+    "next": "turbo run next",
     "clean": "turbo run clean"
   },
   "workspaces": [
-    "my-names"
+    "my-names",
+    "app/*"
   ]
 }
