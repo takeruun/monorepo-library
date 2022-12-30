@@ -1,0 +1,61 @@
+name: Bump up version and create release
+
+env:
+  GITHUB_USERNAME: ${{ secrets.RELEASE_GITHUB_USERNAME }}
+  GITHUB_TOKEN: ${{ secrets.RELEASE_GITHUB_TOKEN }}
+
+on:
+  pull_request:
+    branches:
+      - main
+    types: [closed]
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    if: |
+      (github.event.pull_request.merged == true) &&
+      (contains(github.event.pull_request.labels.*.name, 'release-major') ||
+      contains(github.event.pull_request.labels.*.name, 'release-minor') ||
+      contains(github.event.pull_request.labels.*.name, 'release-patch'))
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          token: ${{ secrets.RELEASE_GITHUB_TOKEN }}
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version-file: .node-version
+      - run: git fetch origin
+      - name: Set Version Level
+        id: set_version_level
+        run: |
+          if ${{ contains(github.event.pull_request.labels.*.name, 'release-major') }}
+          then
+            echo "LEVEL=major" >> $GITHUB_OUTPUT
+          elif ${{ contains(github.event.pull_request.labels.*.name, 'release-minor') }}
+          then
+            echo "LEVEL=minor" >> $GITHUB_OUTPUT
+          else
+            echo "LEVEL=patch" >> $GITHUB_OUTPUT
+          fi
+      - name: Build Release
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          npm version ${{steps.set_version_level.outputs.LEVEL}}
+      - name: Version Up
+        id: version_up
+        run: |
+          echo "VERSION=$(node -e "console.log(require(path.resolve(__dirname, './package.json')).version)")" >> $GITHUB_OUTPUT
+          echo "HASH=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
+      - name: Push Upstream
+        run: git push origin main
+      - name: Release
+        uses: actions/create-release@v1
+        with:
+          draft: false
+          tag_name: v${{steps.version_up.outputs.VERSION}}
+          release_name: v${{steps.version_up.outputs.VERSION}}
+          commitish: ${{steps.version_up.outputs.HASH}}
+          body: ${{ github.event.pull_request.html_url }}
